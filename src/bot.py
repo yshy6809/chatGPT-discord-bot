@@ -41,6 +41,7 @@ def run_discord_bot():
         if interaction.user == client.user:
             return
         chat_log(interaction, message)
+        await interaction.response.defer()
         await interaction.channel.send("指令开发中，敬请期待～")
 
 
