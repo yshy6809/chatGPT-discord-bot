@@ -8,6 +8,11 @@ from src import log, art, personas, responses
 
 logger = log.setup_logger(__name__)
 
+def chat_log(interaction: discord.Interaction, message: str):
+    username = str(interaction.user)
+    channel = str(interaction.channel)
+    logger.info(f"\x1b[31m{username}\x1b[0m : /chat [{message}] in ({channel})")
+
 def run_discord_bot():
     @client.event
     async def on_ready():
@@ -30,6 +35,13 @@ def run_discord_bot():
         logger.info(
             f"\x1b[31m{username}\x1b[0m : /chat [{message}] in ({channel})")
         await client.send_message(interaction, message)
+    
+    @client.tree.command(name="chatwithsearch", description="Chatgpt with a search engine")
+    async def chat_with_search(interaction: discord.Interaction, *, message: str):
+        if interaction.user == client.user:
+            return
+        chat_log(interaction, message)
+        interaction.channel.send("指令开发中，敬请期待～")
 
 
     @client.tree.command(name="private", description="Toggle private access")
