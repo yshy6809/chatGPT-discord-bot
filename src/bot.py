@@ -41,7 +41,7 @@ def run_discord_bot():
         if interaction.user == client.user:
             return
         chat_log(interaction, message)
-        interaction.channel.send("指令开发中，敬请期待～")
+        await interaction.channel.send("指令开发中，敬请期待～")
 
 
     @client.tree.command(name="private", description="Toggle private access")
