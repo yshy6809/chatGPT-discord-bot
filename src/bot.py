@@ -42,7 +42,7 @@ def run_discord_bot():
             return
         chat_log(interaction, message)
         await interaction.response.defer()
-        await interaction.channel.send("指令开发中，敬请期待～")
+        await interaction.followup.send("指令开发中，敬请期待～")
 
 
     @client.tree.command(name="private", description="Toggle private access")
