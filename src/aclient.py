@@ -51,8 +51,9 @@ class aclient(discord.Client):
             author = message.author.id
         try:
             async with lock:
-                context_manager.update_context(message.channel_id, self.get_model_name(), user_message)
-                self.chatbot.config["model"] = context_manager.get_model_name(message.channel_id).split(" ")[1]
+                if context_manager.get_model_name(message.channel_id).split(" ")[0] == "UNOFFICIAL":
+                    context_manager.update_context(message.channel_id, self.get_model_name(), user_message)
+                    self.chatbot.config["model"] = context_manager.get_model_name(message.channel_id).split(" ")[1]
                 response = (f'> **{user_message}** - <@{str(author)}' + '> \n\n')
                 if self.chat_model == "OFFICIAL":
                     response = f"{response}{await responses.official_handle_response(user_message, self)}"
