@@ -1,10 +1,12 @@
 import os
 import openai
 import discord
+import asyncio
 from random import randrange
 from src.aclient import client
 from discord import app_commands
 from src import log, art, personas, responses
+from src.context.context import context_manager
 
 logger = log.setup_logger(__name__)
 
@@ -99,34 +101,21 @@ def run_discord_bot():
     async def chat_model(interaction: discord.Interaction, choices: app_commands.Choice[str]):
         await interaction.response.defer(ephemeral=False)
         if choices.value == "OFFICIAL":
-            client.openAI_gpt_engine = "gpt-3.5-turbo"
-            client.chat_model = "OFFICIAL"
-            client.chatbot = client.get_chatbot_model()
-            await interaction.followup.send(
-                "> **Info: You are now in Official GPT-3.5 model.**\n")
-            logger.warning("\x1b[31mSwitch to OFFICIAL GPT-3.5 model\x1b[0m")
+            await update_chat_model(interaction, "OFFICIAL", "gpt-3.5-turbo", "Official GPT-3.5")
         elif choices.value == "OFFICIAL-GPT4":
-            client.openAI_gpt_engine = "gpt-4"
-            client.chat_model = "OFFICIAL"
-            client.chatbot = client.get_chatbot_model()
-            await interaction.followup.send(
-                "> **Info: You are now in Official GPT-4.0 model.**\n")
-            logger.warning("\x1b[31mSwitch to OFFICIAL GPT-4.0 model\x1b[0m")
+            await update_chat_model(interaction, "OFFICIAL", "gpt-4", "Official GPT-4.0")
         elif choices.value == "UNOFFICIAL":
-            client.openAI_gpt_engine = "gpt-3.5-turbo"
-            client.chat_model = "UNOFFICIAL"
-            client.chatbot = client.get_chatbot_model()
-            await interaction.followup.send(
-                "> **Info: You are now in Website ChatGPT-3.5 model.**\n")
-            logger.warning("\x1b[31mSwitch to UNOFFICIAL(Website) GPT-3.5 model\x1b[0m")
+            await update_chat_model(interaction, "UNOFFICIAL", "gpt-3.5-turbo", "Website ChatGPT-3.5")
         elif choices.value == "UNOFFICIAL-GPT4":
-            client.openAI_gpt_engine = "gpt-4"
-            client.chat_model = "UNOFFICIAL"
-            client.chatbot = client.get_chatbot_model()
-            await interaction.followup.send(
-                "> **Info: You are now in Website ChatGPT-4.0 model.**\n")
-            logger.warning("\x1b[31mSwitch to UNOFFICIAL(Website) GPT-4.0 model\x1b[0m")
+            await update_chat_model(interaction, "UNOFFICIAL", "gpt-4", "Website ChatGPT-4.0")
 
+    async def update_chat_model(interaction: discord.Interaction, chat_model:str, gpt_engine:str, display_name:str):
+        client.openAI_gpt_engine = gpt_engine
+        client.chat_model = chat_model
+        client.chatbot = client.get_chatbot_model()
+        context_manager.set_model_name(interaction.channel_id, chat_model.strip() + " " + gpt_engine.strip())
+        await interaction.followup.send(f"> **Info: You are now in {display_name} model.**\n")
+        logger.warning(f"\x1b[31mSwitch to {display_name} model\x1b[0m")
 
     @client.tree.command(name="reset", description="Complete reset ChatGPT conversation history")
     async def reset(interaction: discord.Interaction):
@@ -134,6 +123,10 @@ def run_discord_bot():
             client.chatbot.reset()
         elif client.chat_model == "UNOFFICIAL":
             client.chatbot.reset_chat()
+            channel_context = context_manager.get_context(interaction.channel_id)
+            context_manager.reset_context(interaction.channel_id)
+            await asyncio.gather(*[client.chatbot.delete_conversation(conversation_id)
+                                   for conversation_id in channel_context.conversation_id_of.values()])
         await interaction.response.defer(ephemeral=False)
         await interaction.followup.send("> **Info: I have forgotten everything.**")
         personas.current_persona = "standard"
