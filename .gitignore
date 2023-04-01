@@ -126,6 +126,7 @@ celerybeat.pid
 
 # Environments
 .env
+cookies.json
 .venv
 env/
 venv/

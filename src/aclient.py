@@ -7,6 +7,7 @@ from discord import app_commands
 from revChatGPT.V3 import Chatbot
 from revChatGPT.V1 import AsyncChatbot
 from src.context.context import context_manager
+from agent.bing_agent import BingAgent
 
 import asyncio
 

@@ -2,6 +2,15 @@ from src import bot
 from dotenv import load_dotenv
 import sys
 
+import asyncio
+from EdgeGPT import Chatbot, ConversationStyle
+
+# async def bing_main():
+#     bot = Chatbot()
+#     print(await bot.ask(prompt="你好"))
+#     print(await bot.ask(prompt="北京有什么好吃的饭店"))
+#     await bot.close()
+
 def check_version() -> None:
     import pkg_resources
     import src.log
@@ -28,4 +37,4 @@ def check_version() -> None:
 if __name__ == '__main__': 
     check_version()
     bot.run_discord_bot()
-    
+    # asyncio.run(bing_main())

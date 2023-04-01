@@ -7,6 +7,8 @@ from src.aclient import client
 from discord import app_commands
 from src import log, art, personas, responses
 from src.context.context import context_manager
+from agent.bing_agent import bing_agent
+from disc.message_sender import message_sender
 
 logger = log.setup_logger(__name__)
 
@@ -45,6 +47,16 @@ def run_discord_bot():
         chat_log(interaction, message)
         await interaction.response.defer()
         await interaction.followup.send("指令开发中，敬请期待～")
+    
+    @client.tree.command(name="chatwithbing", description="Chat with bing ai")
+    async def chat_with_bing(interaction: discord.Interaction, *, message: str):
+        if interaction.user == client.user:
+            return
+        chat_log(interaction, message)
+        await interaction.response.defer()
+        resp:str = (f'> **{message}** - <@{str(interaction.user.id)}' + '> \n\n') 
+        resp += await bing_agent.ask(interaction.channel_id, message)
+        await message_sender.send(interaction, resp)
 
 
     @client.tree.command(name="private", description="Toggle private access")
