@@ -145,7 +145,7 @@ def run_discord_bot():
 
     @client.tree.command(name="reset", description="Complete reset ChatGPT conversation history")
     async def reset(interaction: discord.Interaction):
-        bing_agent.reset(interaction.channel_id)
+        await bing_agent.reset(interaction.channel_id)
         if client.chat_model == "OFFICIAL":
             client.chatbot.reset()
         elif client.chat_model == "UNOFFICIAL":
