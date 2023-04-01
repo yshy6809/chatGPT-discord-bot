@@ -16,4 +16,7 @@ class BingAgent:
     def switch_style(self, context_id:str, style:CONVERSATION_STYLE_TYPE):
         self.conversation_style_of[context_id] = style
     
+    def reset(self, context_id:str):
+        self.bot_of[context_id].reset()
+    
 bing_agent:BingAgent = BingAgent()

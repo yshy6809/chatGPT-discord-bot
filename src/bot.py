@@ -57,6 +57,20 @@ def run_discord_bot():
         resp:str = (f'> **{message}** - <@{str(interaction.user.id)}' + '> \n\n') 
         resp += await bing_agent.ask(interaction.channel_id, message)
         await message_sender.send(interaction, resp)
+    
+    @client.tree.command(name="bing-style", description="Switch different bing conversation style")
+    @app_commands.choices(choices=[
+        app_commands.Choice(name="creative", value="creative"),
+        app_commands.Choice(name="balanced", value="balanced"),
+        app_commands.Choice(name="precise", value="precise")
+    ])
+    async def bing_style(interaction: discord.Interaction, choices: app_commands.Choice[str]):
+        if interaction.user == client.user:
+            return
+        chat_log(interaction, choices)
+        await interaction.response.defer()
+        bing_agent.switch_style(interaction.channel_id, choices.value)
+        await interaction.followup.send(f"> **Switch to {choices.value} style**")
 
 
     @client.tree.command(name="private", description="Toggle private access")
@@ -131,6 +145,7 @@ def run_discord_bot():
 
     @client.tree.command(name="reset", description="Complete reset ChatGPT conversation history")
     async def reset(interaction: discord.Interaction):
+        bing_agent.reset(interaction.channel_id)
         if client.chat_model == "OFFICIAL":
             client.chatbot.reset()
         elif client.chat_model == "UNOFFICIAL":
