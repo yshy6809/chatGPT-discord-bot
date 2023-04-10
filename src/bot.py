@@ -131,7 +131,7 @@ def run_discord_bot():
         elif choices.value == "OFFICIAL-GPT4":
             await update_chat_model(interaction, "OFFICIAL", "gpt-4", "Official GPT-4.0")
         elif choices.value == "UNOFFICIAL":
-            await update_chat_model(interaction, "UNOFFICIAL", "gpt-3.5-turbo", "Website ChatGPT-3.5")
+            await update_chat_model(interaction, "UNOFFICIAL", "text-davinci-002-render-sha", "Website ChatGPT-3.5")
         elif choices.value == "UNOFFICIAL-GPT4":
             await update_chat_model(interaction, "UNOFFICIAL", "gpt-4", "Website ChatGPT-4.0")
 
