@@ -37,7 +37,7 @@ class aclient(discord.Client):
 
     def get_chatbot_model(self) -> Union[AsyncChatbot, Chatbot]:
         if self.chat_model == "UNOFFICIAL":
-            return AsyncChatbot(config={"email": self.openAI_email, "password": self.openAI_password, "session_token": self.chatgpt_session_token, "model": self.openAI_gpt_engine, "paid": self.chatgpt_paid})
+            return AsyncChatbot(config={"email": self.openAI_email, "password": self.openAI_password, "access_token": self.chatgpt_session_token, "model": self.openAI_gpt_engine, "paid": self.chatgpt_paid})
         elif self.chat_model == "OFFICIAL":
             return Chatbot(api_key=self.openAI_API_key, engine=self.openAI_gpt_engine)
 
